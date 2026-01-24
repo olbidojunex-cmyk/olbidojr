@@ -166,7 +166,7 @@ function App() {
                 className={`name-title ${isRevealed ? "reveal" : ""}`}
                 ref={nameRef}
               >
-                I'm Olbido, Maximino{" "}
+                I'm Olbido{" "}
               </h1>
               <p className="hero-sub">
                 {roleText}
