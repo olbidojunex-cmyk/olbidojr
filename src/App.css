@@ -13,6 +13,13 @@
   box-sizing: border-box;
 }
 
+/* --- PREVENT SCROLL UTILITY --- */
+/* Add this class to <body> via JavaScript when the menu is open */
+body.no-scroll {
+  overflow: hidden;
+  height: 100vh;
+}
+
 /* --- CUSTOM CURSOR --- */
 @media (hover: hover) and (pointer: fine) {
   * {
@@ -99,7 +106,6 @@ body {
   text-transform: uppercase;
 }
 
-/* Matching React's .mobile-menu-btn */
 .mobile-menu-btn {
   display: none;
   background: none;
@@ -115,12 +121,11 @@ body {
     display: block;
   }
 
-  /* Matching React's dynamic className={`nav-links ${isMenuOpen ? "open" : ""}`} */
   .nav-links {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 80%;
+    width: 100%; /* Changed to 100% to fully cover screen */
     height: 100vh;
     background: var(--card-bg);
     flex-direction: column;
@@ -129,6 +134,7 @@ body {
     display: flex;
     transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Allow menu itself to scroll if items are many, but not body */
   }
 
   .nav-links.open {
@@ -209,9 +215,7 @@ body {
   color: var(--accent-blue);
 }
 @keyframes blink {
-  50% {
-    opacity: 0;
-  }
+  50% { opacity: 0; }
 }
 
 /* --- RESUME CARD --- */
@@ -219,7 +223,7 @@ body {
   background: var(--card-bg);
   padding: 25px;
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.05);
   transform: rotate(2deg);
   animation: float 6s ease-in-out infinite;
@@ -325,7 +329,7 @@ body {
   display: inline-block;
 }
 
-/* --- WORKS SECTION (NOW A FLEXIBLE GRID) --- */
+/* --- WORKS SECTION --- */
 .works-section {
   padding: 6rem 0;
 }
@@ -353,7 +357,6 @@ body {
   font-weight: 600;
 }
 
-/* Fixed Projects Grid Layout */
 .works-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
@@ -392,14 +395,26 @@ body {
   top: 15px;
   left: 15px;
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
 }
+
 .work-tags span {
-  background: rgba(37, 99, 235, 0.9);
-  padding: 4px 12px;
-  border-radius: 8px;
-  font-size: 0.65rem;
+  background: rgba(255, 255, 255, 0.9);
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--accent-blue);
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
+}
+
+.work-tags span:hover {
+  transform: translateY(-3px);
+  background: var(--accent-blue);
   color: white;
 }
 
@@ -432,21 +447,12 @@ body {
 }
 
 @keyframes scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(2deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(1deg);
-  }
+  0%, 100% { transform: translateY(0) rotate(2deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
 }
 
 /* BUTTONS */
@@ -462,6 +468,7 @@ body {
   font-weight: 700;
   font-size: 0.85rem;
   transition: 0.3s;
+  text-decoration: none;
 }
 .btn-outline {
   border: 2px solid var(--black);
@@ -508,41 +515,136 @@ body {
   transform: scale(1.1);
 }
 
-/* --- UPDATED TAGS FOR ICONS --- */
-.work-tags {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  display: flex;
-  gap: 8px;
+/* --- CONTACT & FOOTER SECTION --- */
+.footer-section {
+  background-color: var(--black);
+  color: white;
+  padding: 80px 0 40px;
+  width: 100%;
 }
 
-.work-tags span {
-  background: rgba(255, 255, 255, 0.9);
-  width: 35px;
-  height: 35px;
-  border-radius: 10px;
+.footer-grid {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  color: var(--accent-blue);
-  font-size: 1.1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: 0.3s;
+  text-align: center;
+  gap: 50px;
 }
 
-.work-tags span:hover {
-  transform: translateY(-3px);
+.footer-title {
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.footer-title span {
+  color: var(--accent-blue);
+}
+
+.footer-intro p {
+  color: var(--gray);
+  max-width: 500px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+}
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+  width: 100%;
+}
+
+.contact-item {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px 30px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 280px;
+}
+
+.contact-item:hover {
   background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3);
+}
+
+.contact-item i {
+  font-size: 1.8rem;
+  color: var(--accent-blue);
+}
+
+.contact-item:hover i {
   color: white;
 }
 
-/* All other existing styles (Hero, Grid, Marquee) remain unchanged */
-:root {
-  --bg-cream: #ebe9e1;
-  --black: #0f172a;
-  --accent-blue: #2563eb;
-  --accent-orange: #e1552f;
-  --gray: #64748b;
-  --card-bg: #ffffff;
+.contact-item span {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--gray);
+  margin-bottom: 4px;
+}
+
+.contact-item p {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.social-media {
+  display: flex;
+  gap: 20px;
+}
+
+.social-media a {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.social-media a:hover {
+  background: white;
+  color: var(--black);
+  transform: scale(1.15) rotate(8deg);
+}
+
+.footer-bottom {
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--gray);
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .contact-item {
+    width: 100%;
+    min-width: unset;
+    padding: 15px 20px;
+  }
+  .footer-section {
+    padding: 60px 0 30px;
+  }
 }
