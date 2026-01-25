@@ -1,15 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 
+// --- LOADING SCREEN COMPONENT ---
+const LoadingScreen = () => {
+  return (
+    <div className="loader-wrapper">
+      <div className="loader-content">
+        {/* Your requested GIF link */}
+        <img
+          src="https://media2.giphy.com/media/2IudUHdI075HL02Pkk/giphy.gif"
+          alt="Loading..."
+          className="loading-gif"
+        />
+        <div className="loader-bar">
+          <div className="loader-progress"></div>
+        </div>
+        <p className="loading-text">Preparing Portfolio...</p>
+      </div>
+    </div>
+  );
+};
+
 function App() {
+  const [loading, setLoading] = useState(true);
   const [scrollWidth, setScrollWidth] = useState(0);
-  const [isRevealed, setIsRevealed] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const nameRef = useRef(null);
 
-  // --- DATA: WEB PROJECTS (FIRST) ---
+  // --- DATA ---
   const webProjects = [
     {
       title: "POS System ni Librong James",
@@ -35,12 +54,11 @@ function App() {
     },
   ];
 
-  // --- DATA: PHOTOSHOP & CREATIVE (SECOND) ---
   const creativeWorks = [
     {
       title: "Branding & Layout Design",
       desc: "Professional layouts and business stationary designed in Photoshop.",
-      image: "/propesiya.png",
+      image: "/banner.png",
       tags: [
         { name: "Photoshop", icon: "fas fa-paint-brush" },
         { name: "Word", icon: "far fa-file-word" },
@@ -49,19 +67,12 @@ function App() {
     {
       title: "Graphic Manipulation",
       desc: "Advanced photo editing and digital art compositions.",
-      image: "/banner.png",
+      image: "/propesiya.png",
       tags: [{ name: "Photoshop", icon: "fas fa-palette" }],
     },
   ];
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
+  // --- TYPING ANIMATION LOGIC ---
   const [roleText, setRoleText] = useState("");
   const [roleIndex, setRoleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -82,7 +93,7 @@ function App() {
         const nextText = currentFullRole.slice(0, roleText.length + 1);
         setRoleText(nextText);
         if (nextText === currentFullRole) {
-          setTimeout(() => setIsDeleting(true), 3000);
+          setTimeout(() => setIsDeleting(true), 2000);
         }
       } else {
         const nextText = currentFullRole.slice(0, roleText.length - 1);
@@ -93,31 +104,49 @@ function App() {
         }
       }
     };
-    const timer = setTimeout(handleTyping, isDeleting ? 50 : 100);
+    const timer = setTimeout(handleTyping, isDeleting ? 40 : 80);
     return () => clearTimeout(timer);
   }, [roleText, isDeleting, roleIndex]);
 
+  // --- SCROLL REVEAL & UTILITIES ---
   useEffect(() => {
+    // Hide loader after 3 seconds
+    const timer = setTimeout(() => setLoading(false), 3000);
+
+    const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+
     const handleScroll = () => {
+      // Progress Bar
       const totalHeight =
         document.documentElement.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
       setScrollWidth(progress);
+
+      // Scroll To Top Button
       setShowScrollTop(window.scrollY > 500);
+
+      // Scroll Animation Logic
+      const reveals = document.querySelectorAll(".reveal-section");
+      reveals.forEach((el) => {
+        const windowHeight = window.innerHeight;
+        const elementTop = el.getBoundingClientRect().top;
+        const elementVisible = 150;
+        if (elementTop < windowHeight - elementVisible) {
+          el.classList.add("active");
+        }
+      });
     };
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsRevealed(true);
-      },
-      { threshold: 0.1 },
-    );
-    if (nameRef.current) observer.observe(nameRef.current);
+
+    window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("scroll", handleScroll);
     return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("scroll", handleScroll);
-      observer.disconnect();
+      clearTimeout(timer);
     };
   }, []);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="portfolio-wrapper">
@@ -147,6 +176,20 @@ function App() {
           <a href="#home" className="nav-brand">
             PORTFOLIO
           </a>
+          <div className={`nav-links ${isMenuOpen ? "open" : ""}`}>
+            <a href="#home" onClick={() => setIsMenuOpen(false)}>
+              Home
+            </a>
+            <a href="#works" onClick={() => setIsMenuOpen(false)}>
+              Projects
+            </a>
+            <a href="#creative" onClick={() => setIsMenuOpen(false)}>
+              Creative
+            </a>
+            <a href="#contact" onClick={() => setIsMenuOpen(false)}>
+              Contact
+            </a>
+          </div>
           <button
             className="mobile-menu-btn"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -156,32 +199,21 @@ function App() {
         </div>
       </header>
 
-      <main className="snap-container">
-        {/* HERO SECTION */}
-        <section id="home" className="hero snap-section">
+      <main>
+        {/* HERO SECTION - Always active initially */}
+        <section id="home" className="hero reveal-section active">
           <div className="container hero-grid">
             <div className="hero-text">
               <h2 className="greeting">Hi There!</h2>
-              <h1
-                className={`name-title ${isRevealed ? "reveal" : ""}`}
-                ref={nameRef}
-              >
-                I'm Olbido{" "}
-              </h1>
+              <h1 className="name-title reveal">I'm Olbido</h1>
               <p className="hero-sub">
                 {roleText}
                 <span className="cursor">|</span>
               </p>
               <div className="cta-group">
-                <a
-                  href="/olbido.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outline"
-                >
+                <a href="/olbido.pdf" target="_blank" className="btn-outline">
                   Resume
                 </a>
-
                 <a href="#contact" className="btn-solid">
                   Let's Talk
                 </a>
@@ -202,30 +234,11 @@ function App() {
                     <h3 className="card-name">Olbido, Maximino Jr.</h3>
                     <p className="card-edu">Tagoloan Community College</p>
                     <div className="card-divider"></div>
-                    <strong className="skill-title">Technical Skills</strong>
+                    <strong className="skill-title">Tech Skills</strong>
                     <ul className="card-skills">
-                      <li>• Microsoft Office (Word, Excel, PowerPoint)</li>
-                      <li>• Adobe Photoshop</li>
-                      <li>• PC Troubleshooting & OS Formatting</li>
-                    </ul>
-
-                    <strong className="skill-title">Creative Skills</strong>
-                    <ul className="card-skills">
-                      <li>• Graphic Design</li>
-                      <li>• Layout Design</li>
-                      <li>• Canva</li>
-                      <li>• Picsart</li>
-                      <li>• CapCut / Video Editing</li>
-                    </ul>
-
-                    <strong className="skill-title">
-                      Academic / Programming Skills
-                    </strong>
-                    <ul className="card-skills">
-                      <li>• Web Development (HTML, CSS, JavaScript, PHP)</li>
-                      <li>• UI/UX Design</li>
-                      <li>• Basic Coding</li>
-                      <li>• MySQL / Database Management</li>
+                      <li>• MS Office & Adobe Photoshop</li>
+                      <li>• PC Repair & Troubleshooting</li>
+                      <li>• Fullstack Web Development</li>
                     </ul>
                   </div>
                 </div>
@@ -235,8 +248,8 @@ function App() {
           </div>
         </section>
 
-        {/* WEB WORKS SECTION (NOW FIRST) */}
-        <section id="works" className="works-section snap-section">
+        {/* WEB PROJECTS */}
+        <section id="works" className="works-section reveal-section">
           <div className="container">
             <p className="section-label">WEB PROJECTS</p>
             <h2 className="section-title">
@@ -271,8 +284,8 @@ function App() {
           </div>
         </section>
 
-        {/* CREATIVE SECTION (NOW SECOND) */}
-        <section id="creative" className="works-section snap-section">
+        {/* CREATIVE DESIGN */}
+        <section id="creative" className="works-section reveal-section">
           <div className="container">
             <p className="section-label">CREATIVE DESIGN</p>
             <h2 className="section-title">
@@ -301,28 +314,24 @@ function App() {
           </div>
         </section>
 
-        {/* CONTACT & FOOTER SECTION */}
-        <section id="contact" className="footer-section snap-section">
+        {/* CONTACT & FOOTER */}
+        <section id="contact" className="footer-section reveal-section">
           <div className="container footer-grid">
             <div className="footer-intro">
               <h2 className="footer-title">
                 Let's <span>Connect</span>
               </h2>
-              <p>
-                Looking for a dedicated Intern or Developer? Feel free to reach
-                out through any of these platforms.
-              </p>
+              <p>Looking for a dedicated Intern or Developer?</p>
             </div>
-
             <div className="contact-links">
-              <a href="mailto:your-email@example.com" className="contact-item">
+              <a href="mailto:olbidojunex@gmail.com" className="contact-item">
                 <i className="fas fa-envelope"></i>
                 <div>
                   <span>Email Me</span>
                   <p>olbidojunex@gmail.com</p>
                 </div>
               </a>
-              <a href="tel:+639000000000" className="contact-item">
+              <a href="tel:+639947587140" className="contact-item">
                 <i className="fas fa-phone"></i>
                 <div>
                   <span>Call Me</span>
@@ -330,22 +339,6 @@ function App() {
                 </div>
               </a>
             </div>
-
-            <div className="social-media">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer">
-                <i className="fab fa-facebook-f"></i>
-              </a>
-              <a href="https://github.com" target="_blank" rel="noreferrer">
-                <i className="fab fa-github"></i>
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer">
-                <i className="fab fa-linkedin-in"></i>
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer">
-                <i className="fab fa-instagram"></i>
-              </a>
-            </div>
-
             <div className="footer-bottom">
               <p>&copy; 2026 • olbido . All Rights Reserved.</p>
             </div>
