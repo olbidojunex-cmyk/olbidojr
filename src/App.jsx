@@ -234,11 +234,30 @@ function App() {
                     <h3 className="card-name">Olbido, Maximino Jr.</h3>
                     <p className="card-edu">Tagoloan Community College</p>
                     <div className="card-divider"></div>
-                    <strong className="skill-title">Tech Skills</strong>
+                    <strong className="skill-title">Technical Skills</strong>
                     <ul className="card-skills">
-                      <li>• MS Office & Adobe Photoshop</li>
-                      <li>• PC Repair & Troubleshooting</li>
-                      <li>• Fullstack Web Development</li>
+                      <li>• Microsoft Office (Word, Excel, PowerPoint)</li>
+                      <li>• Adobe Photoshop</li>
+                      <li>• PC Troubleshooting & OS Formatting</li>
+                    </ul>
+
+                    <strong className="skill-title">Creative Skills</strong>
+                    <ul className="card-skills">
+                      <li>• Graphic Design</li>
+                      <li>• Layout Design</li>
+                      <li>• Canva</li>
+                      <li>• Picsart</li>
+                      <li>• CapCut / Video Editing</li>
+                    </ul>
+
+                    <strong className="skill-title">
+                      Academic / Programming Skills
+                    </strong>
+                    <ul className="card-skills">
+                      <li>• Web Development (HTML, CSS, JavaScript, PHP)</li>
+                      <li>• UI/UX Design</li>
+                      <li>• Basic Coding</li>
+                      <li>• MySQL / Database Management</li>
                     </ul>
                   </div>
                 </div>
