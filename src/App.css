@@ -167,11 +167,9 @@ body {
     text-align: center;
     gap: 20px;
   }
-  /* CHANGED: Text now has order 1 to appear on top */
   .hero-text {
     order: 1;
   }
-  /* CHANGED: Visual now has order 2 to appear below text */
   .hero-visual {
     order: 2;
     display: flex;
@@ -220,7 +218,6 @@ body {
   50% { opacity: 0; }
 }
 
-/* --- RESUME CARD --- */
 .resume-card {
   background: var(--card-bg);
   padding: 25px;
@@ -231,7 +228,20 @@ body {
   animation: float 6s ease-in-out infinite;
   max-width: 450px;
   width: 100%;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.resume-card:hover {
+  transform: rotate(0deg) translateY(-10px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(2deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+
 
 .relative-body {
   position: relative;
@@ -650,11 +660,12 @@ body {
     padding: 60px 0 30px;
   }
 }
+
 /* --- LOADING SCREEN --- */
 .loader-wrapper {
   position: fixed;
   inset: 0;
-  background-color: var(--bg-cream); /* Matches your theme */
+  background-color: var(--bg-cream);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -716,7 +727,6 @@ body {
   visibility: visible;
 }
 
-/* Staggered animation for grid items within a visible section */
 .reveal-section.active .work-card {
   animation: fadeInUp 0.8s ease forwards;
   opacity: 0;
@@ -734,4 +744,352 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* --- HORIZONTAL SCROLL LOGIC --- */
+.horizontal-scroll-container {
+  position: relative;
+  height: 400vh; 
+}
+
+.sticky-wrapper {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.horizontal-track {
+  display: flex;
+  padding: 0 5vw;
+  width: max-content;
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+}
+
+.horizontal-item {
+  width: 500px;
+  height: 350px;
+  margin-right: 40px;
+  flex-shrink: 0;
+}
+
+.cert-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.cert-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cert-info-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.9), transparent);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 30px;
+  color: white;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.4s ease;
+}
+.cert-card:hover .cert-info-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cert-card:hover img {
+  transform: scale(1.05);
+}
+
+.cert-info-overlay h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.cert-info-overlay span {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent-blue);
+}
+
+/* MODAL */
+.cert-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.98);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: zoom-out;
+}
+
+.modal-content img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 12px;
+  box-shadow: 0 0 100px rgba(37, 99, 235, 0.2);
+}
+
+@media (max-width: 768px) {
+  .horizontal-item {
+    width: 300px;
+    height: 220px;
+  }
+}
+/* --- MODAL ANIMATIONS --- */
+.fade-in {
+  animation: modalFadeIn 0.3s ease forwards;
+}
+
+.scale-up {
+  animation: modalScaleUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* --- HORIZONTAL SCROLL ALIGNMENT FIX --- */
+.horizontal-header {
+  position: absolute; /* Lock it to the top of the container */
+  top: 10vh;          /* Adjust distance from top */
+  left: 0;
+  right: 0;
+  z-index: 10;
+  text-align: left;   /* Force left alignment */
+}
+
+.sticky-wrapper {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* This centers the horizontal track vertically */
+  align-items: flex-start; /* Keeps children aligned to the start (left) */
+}
+
+.horizontal-track {
+  margin-top: 15vh; /* Push the track down so it doesn't overlap labels */
+  display: flex;
+  padding: 0 5vw;
+  width: max-content;
+  will-change: transform;
+}
+
+/* --- MODAL ANIMATIONS --- */
+.fade-in {
+  animation: modalFadeIn 0.3s ease forwards;
+}
+
+.scale-up {
+  animation: modalScaleUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* --- FLOATING MUSIC PLAYER --- */
+.music-player-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: var(--card-bg);
+  padding: 15px 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 250px;
+  z-index: 1000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* --- FLOATING MUSIC PLAYER --- */
+.music-player-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 250px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 15px 15px 10px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: "Inter", sans-serif;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  cursor: default;
+  position: fixed;
+}
+
+/* --- MINIMIZED STATE --- */
+.music-player-container.minimized {
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 50%; /* circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Hide all child elements except the icon in minimized state */
+.music-player-container.minimized .player-header,
+.music-player-container.minimized .player-track,
+.music-player-container.minimized .player-controls-row {
+  display: none;
+}
+
+/* Centered music icon when minimized */
+.music-player-container.minimized::before {
+  content: "\f001"; /* FontAwesome music icon */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: #2563eb;
+}
+
+/* --- PLAYER HEADER --- */
+.player-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+  padding-top: 20px; /* space for minimize button */
+}
+
+/* Title & Artist */
+.player-header strong {
+  font-size: 0.95rem;
+  color: #111827; 
+  font-weight: 600;
+}
+
+.player-header span {
+  font-size: 0.75rem;
+  color: #2563eb;
+  font-weight: 400;
+}
+
+/* --- MINIMIZE BUTTON ON TOP RIGHT --- */
+.minimize-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #2563eb;
+  transition: transform 0.2s ease;
+}
+
+.minimize-btn:hover {
+  transform: scale(1.2);
+}
+
+/* --- TRACK & PROGRESS --- */
+.player-track {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+}
+
+.time-text {
+  width: 35px;
+  text-align: center;
+}
+
+.progress-bar-container {
+  flex: 1;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: #2563eb;
+  transition: width 0.1s linear;
+}
+
+/* --- CONTROLS ROW --- */
+.player-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.player-icon,
+.player-play-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #2563eb;
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.player-icon:hover,
+.player-play-btn:hover {
+  transform: scale(1.3);
+}
+
+.player-play-btn i {
+  font-size: 1.2rem;
 }

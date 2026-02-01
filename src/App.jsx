@@ -6,7 +6,6 @@ const LoadingScreen = () => {
   return (
     <div className="loader-wrapper">
       <div className="loader-content">
-        {/* Your requested GIF link */}
         <img
           src="https://media2.giphy.com/media/2IudUHdI075HL02Pkk/giphy.gif"
           alt="Loading..."
@@ -27,8 +26,25 @@ function App() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  // Music Player State
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isPlayerMinimized, setIsPlayerMinimized] = useState(false);
+  const audioRef = useRef(null);
+
+  const scrollSectionRef = useRef(null);
+  const scrollTriggerRef = useRef(null);
 
   // --- DATA ---
+  const musicInfo = {
+    title: "Remember me",
+    artist: "Renz Verano",
+    file: "/music1.mp3",
+  };
+
   const webProjects = [
     {
       title: "POS System ni Librong James",
@@ -72,7 +88,15 @@ function App() {
     },
   ];
 
-  // --- TYPING ANIMATION LOGIC ---
+  const certificates = [
+    { title: "Web Development", image: "/cert1.png" },
+    { title: "Graphic Design", image: "/cert2.png" },
+    { title: "PC Troubleshooting", image: "/cert3.png" },
+    { title: "Network Security", image: "/cert4.png" },
+    { title: "UI/UX Mastery", image: "/cert5.png" },
+  ];
+
+  // --- TYPING ANIMATION ---
   const [roleText, setRoleText] = useState("");
   const [roleIndex, setRoleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -92,9 +116,8 @@ function App() {
       if (!isDeleting) {
         const nextText = currentFullRole.slice(0, roleText.length + 1);
         setRoleText(nextText);
-        if (nextText === currentFullRole) {
+        if (nextText === currentFullRole)
           setTimeout(() => setIsDeleting(true), 2000);
-        }
       } else {
         const nextText = currentFullRole.slice(0, roleText.length - 1);
         setRoleText(nextText);
@@ -108,32 +131,35 @@ function App() {
     return () => clearTimeout(timer);
   }, [roleText, isDeleting, roleIndex]);
 
-  // --- SCROLL REVEAL & UTILITIES ---
   useEffect(() => {
-    // Hide loader after 3 seconds
     const timer = setTimeout(() => setLoading(false), 3000);
-
     const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
 
     const handleScroll = () => {
-      // Progress Bar
       const totalHeight =
         document.documentElement.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
       setScrollWidth(progress);
-
-      // Scroll To Top Button
       setShowScrollTop(window.scrollY > 500);
 
-      // Scroll Animation Logic
+      if (scrollTriggerRef.current && scrollSectionRef.current) {
+        const offsetTop = scrollTriggerRef.current.offsetTop;
+        const containerHeight = scrollTriggerRef.current.offsetHeight;
+        const sectionWidth = scrollSectionRef.current.scrollWidth;
+        const windowWidth = window.innerWidth;
+
+        let scrollFraction =
+          (window.scrollY - offsetTop) / (containerHeight - window.innerHeight);
+        scrollFraction = Math.max(0, Math.min(1, scrollFraction));
+
+        const translateX = scrollFraction * (sectionWidth - windowWidth);
+        scrollSectionRef.current.style.transform = `translateX(-${translateX}px)`;
+      }
+
       const reveals = document.querySelectorAll(".reveal-section");
       reveals.forEach((el) => {
-        const windowHeight = window.innerHeight;
         const elementTop = el.getBoundingClientRect().top;
-        const elementVisible = 150;
-        if (elementTop < windowHeight - elementVisible) {
-          el.classList.add("active");
-        }
+        if (elementTop < window.innerHeight - 150) el.classList.add("active");
       });
     };
 
@@ -144,7 +170,27 @@ function App() {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(timer);
     };
-  }, []);
+  }, [loading]);
+
+  const toggleMusic = () => {
+    if (isPlaying) audioRef.current.pause();
+    else audioRef.current.play();
+    setIsPlaying(!isPlaying);
+  };
+
+  const togglePlayerSize = () => setIsPlayerMinimized(!isPlayerMinimized);
+
+  const onTimeUpdate = () => {
+    setCurrentTime(audioRef.current.currentTime);
+    setDuration(audioRef.current.duration);
+  };
+
+  const formatTime = (time) => {
+    if (isNaN(time)) return "0:00";
+    const mins = Math.floor(time / 60);
+    const secs = Math.floor(time % 60);
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
 
   if (loading) return <LoadingScreen />;
 
@@ -163,6 +209,80 @@ function App() {
         className="scroll-progress-line"
         style={{ transform: `scaleX(${scrollWidth / 100})` }}
       ></div>
+
+      {selectedImage && (
+        <div
+          className="cert-modal fade-in"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="modal-content scale-up">
+            <img src={selectedImage} alt="Preview" />
+          </div>
+        </div>
+      )}
+
+     {/* --- FLOATING MUSIC PLAYER --- */}
+<audio
+  ref={audioRef}
+  src={musicInfo.file}
+  loop
+  onTimeUpdate={onTimeUpdate}
+/>
+<div
+  className={`music-player-container ${isPlayerMinimized ? "minimized" : ""}`}
+  onClick={() => {
+    if (isPlayerMinimized) togglePlayerSize(); // expand when circle is clicked
+  }}
+>
+  {/* Full player header */}
+  <div className="player-header" onClick={togglePlayerSize}>
+    <strong>{musicInfo.title}</strong> - <span>{musicInfo.artist}</span>
+    <button className="minimize-btn">
+      <i className={`fas ${isPlayerMinimized ? "fa-expand" : "fas fa-minus"}`}></i>
+    </button>
+  </div>
+
+  {/* Full player content */}
+  {!isPlayerMinimized && (
+    <>
+      <div className="player-track">
+        <span className="time-text">{formatTime(currentTime)}</span>
+        <div className="progress-bar-container">
+          <div
+            className="progress-bar-fill"
+            style={{ width: `${(currentTime / duration) * 100}%` }}
+          ></div>
+        </div>
+        <span className="time-text">
+          -{formatTime(duration - currentTime)}
+        </span>
+      </div>
+      <div className="player-controls-row">
+        <button className="player-icon">
+          <i className="fas fa-redo"></i>
+        </button>
+        <button className="player-icon">
+          <i className="fas fa-plus"></i>
+        </button>
+        <button className="player-icon">
+          <i className="fas fa-step-backward"></i>
+        </button>
+        <button className="player-play-btn" onClick={toggleMusic}>
+          <i className={`fas ${isPlaying ? "fa-pause" : "fa-play"}`}></i>
+        </button>
+        <button className="player-icon">
+          <i className="fas fa-step-forward"></i>
+        </button>
+        <button className="player-icon">
+          <i className="fas fa-ellipsis-h"></i>
+        </button>
+        <button className="player-icon">
+          <i className="fas fa-random"></i>
+        </button>
+      </div>
+    </>
+  )}
+</div>
 
       <button
         className={`scroll-up-btn ${showScrollTop ? "pop" : ""}`}
@@ -185,6 +305,9 @@ function App() {
             </a>
             <a href="#creative" onClick={() => setIsMenuOpen(false)}>
               Creative
+            </a>
+            <a href="#certificates" onClick={() => setIsMenuOpen(false)}>
+              Certificates
             </a>
             <a href="#contact" onClick={() => setIsMenuOpen(false)}>
               Contact
@@ -267,7 +390,7 @@ function App() {
           </div>
         </section>
 
-        {/* WEB PROJECTS */}
+        {/* WORKS SECTION */}
         <section id="works" className="works-section reveal-section">
           <div className="container">
             <p className="section-label">WEB PROJECTS</p>
@@ -303,7 +426,7 @@ function App() {
           </div>
         </section>
 
-        {/* CREATIVE DESIGN */}
+        {/* CREATIVE SECTION */}
         <section id="creative" className="works-section reveal-section">
           <div className="container">
             <p className="section-label">CREATIVE DESIGN</p>
@@ -312,7 +435,12 @@ function App() {
             </h2>
             <div className="works-grid">
               {creativeWorks.map((work, idx) => (
-                <div key={idx} className="work-card">
+                <div
+                  key={idx}
+                  className="work-card"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setSelectedImage(work.image)}
+                >
                   <div className="work-image">
                     <img src={work.image} alt={work.title} />
                     <div className="work-tags">
@@ -333,7 +461,41 @@ function App() {
           </div>
         </section>
 
-        {/* CONTACT & FOOTER */}
+        {/* CERTIFICATES SECTION */}
+        <section
+          id="certificates"
+          className="horizontal-scroll-container"
+          ref={scrollTriggerRef}
+        >
+          <div className="sticky-wrapper">
+            <div className="container horizontal-header">
+              <p className="section-label">ACHIEVEMENTS</p>
+              <h2 className="section-title">
+                Certificates <span>Of Participation</span>
+              </h2>
+            </div>
+
+            <div className="horizontal-track" ref={scrollSectionRef}>
+              {certificates.map((cert, idx) => (
+                <div
+                  key={idx}
+                  className="horizontal-item"
+                  onClick={() => setSelectedImage(cert.image)}
+                >
+                  <div className="cert-card">
+                    <img src={cert.image} alt={cert.title} />
+                    <div className="cert-info-overlay">
+                      <h3>{cert.title}</h3>
+                      <span>Click to enlarge</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CONTACT SECTION */}
         <section id="contact" className="footer-section reveal-section">
           <div className="container footer-grid">
             <div className="footer-intro">
