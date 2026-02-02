@@ -215,7 +215,9 @@ body {
   color: var(--accent-blue);
 }
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 .resume-card {
@@ -228,8 +230,9 @@ body {
   animation: float 6s ease-in-out infinite;
   max-width: 450px;
   width: 100%;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .resume-card:hover {
@@ -238,10 +241,14 @@ body {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0) rotate(2deg); }
-  50% { transform: translateY(-10px) rotate(1deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
 }
-
 
 .relative-body {
   position: relative;
@@ -459,12 +466,21 @@ body {
 }
 
 @keyframes scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 @keyframes float {
-  0%, 100% { transform: translateY(0) rotate(2deg); }
-  50% { transform: translateY(-10px) rotate(1deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
 }
 
 /* BUTTONS */
@@ -709,8 +725,12 @@ body {
 }
 
 @keyframes loadProgress {
-  0% { width: 0%; }
-  100% { width: 100%; }
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
 }
 
 /* --- SCROLL REVEAL ANIMATIONS --- */
@@ -732,8 +752,12 @@ body {
   opacity: 0;
 }
 
-.reveal-section.active .work-card:nth-child(1) { animation-delay: 0.2s; }
-.reveal-section.active .work-card:nth-child(2) { animation-delay: 0.4s; }
+.reveal-section.active .work-card:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.reveal-section.active .work-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
 
 @keyframes fadeInUp {
   from {
@@ -749,7 +773,7 @@ body {
 /* --- HORIZONTAL SCROLL LOGIC --- */
 .horizontal-scroll-container {
   position: relative;
-  height: 400vh; 
+  height: 400vh;
 }
 
 .sticky-wrapper {
@@ -787,7 +811,7 @@ body {
   background: white;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .cert-card img {
@@ -867,8 +891,12 @@ body {
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalScaleUp {
@@ -884,11 +912,11 @@ body {
 /* --- HORIZONTAL SCROLL ALIGNMENT FIX --- */
 .horizontal-header {
   position: absolute; /* Lock it to the top of the container */
-  top: 10vh;          /* Adjust distance from top */
+  top: 10vh; /* Adjust distance from top */
   left: 0;
   right: 0;
   z-index: 10;
-  text-align: left;   /* Force left alignment */
+  text-align: left; /* Force left alignment */
 }
 
 .sticky-wrapper {
@@ -921,8 +949,12 @@ body {
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalScaleUp {
@@ -949,7 +981,9 @@ body {
   gap: 10px;
   width: 250px;
   z-index: 1000;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /* --- FLOATING MUSIC PLAYER --- */
@@ -1012,7 +1046,7 @@ body {
 /* Title & Artist */
 .player-header strong {
   font-size: 0.95rem;
-  color: #111827; 
+  color: #111827;
   font-weight: 600;
 }
 
@@ -1092,4 +1126,23 @@ body {
 
 .player-play-btn i {
   font-size: 1.2rem;
+}
+@media (max-width: 768px) {
+  /* Fix spacing between section label and images */
+  .horizontal-header {
+    position: relative;
+    top: 0;
+    margin-bottom: 1.5rem; /* add space below label */
+    text-align: center;
+  }
+
+  .horizontal-track {
+    margin-top: 0; /* remove extra offset */
+    padding-top: 0;
+  }
+
+  .horizontal-item {
+    width: 280px;
+    height: 200px;
+  }
 }

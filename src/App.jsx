@@ -89,11 +89,11 @@ function App() {
   ];
 
   const certificates = [
-    { title: "Web Development", image: "/cert1.png" },
-    { title: "Graphic Design", image: "/cert2.png" },
-    { title: "PC Troubleshooting", image: "/cert3.png" },
-    { title: "Network Security", image: "/cert4.png" },
-    { title: "UI/UX Mastery", image: "/cert5.png" },
+    { title: "", image: "/cert1.png" },
+    { title: "", image: "/cert2.png" },
+    { title: "", image: "/cert3.png" },
+    { title: "", image: "/cert4.png" },
+    { title: "", image: "/cert5.png" },
   ];
 
   // --- TYPING ANIMATION ---
